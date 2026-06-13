@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-color: #2E7D32;
+            --secondary-color: #1B5E20;
+            --accent-color: #4CAF50;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #388E3C;
+            --warning-color: #FF8F00;
+            --danger-color: #D32F2F;
+            --gray-color: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fb 0%, #e8f5e9 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+            body.dark-theme {
+                background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+                color: #ffffff;
+                --primary-color: #4CAF50;
+                --secondary-color: #388E3C;
+                --accent-color: #66BB6A;
+                --dark-color: #ffffff;
+                --light-color: #2d3748;
+                --gray-color: #a0aec0;
+            }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        body.dark-theme header,
+        body.dark-theme .profile-sidebar,
+        body.dark-theme .settings-sidebar,
+        body.dark-theme .settings-content,
+        body.dark-theme .profile-content,
+        body.dark-theme .auth-card,
+        body.dark-theme .document-card,
+        body.dark-theme .collaborators-panel,
+        body.dark-theme .editor-toolbar,
+        body.dark-theme .document-editor,
+        body.dark-theme .invite-modal,
+        body.dark-theme .chat-container,
+        body.dark-theme .empty-state {
+            background-color: rgba(45, 55, 72, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+        }
+
+            .logo:hover,
+            nav ul li a:hover,
+            .user-info:hover,
+            .document-action-btn:hover,
+            .collaborator-item:hover {
+                background: linear-gradient(135deg, rgba(46, 125, 50, 0.15) 0%, rgba(76, 175, 80, 0.1) 100%);
+            }
+
+        body.dark-theme .logo,
+        body.dark-theme .user-info,
+        body.dark-theme .document-icon {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(102, 187, 106, 0.1) 100%);
+        }
+
+            body.dark-theme .logo:hover,
+            body.dark-theme nav ul li a:hover,
+            body.dark-theme .document-action-btn:hover,
+            body.dark-theme .collaborator-item:hover {
+                background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(102, 187, 106, 0.2) 100%);
+            }
+
+        .logo i {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+            nav ul li a {
+                text-decoration: none;
+                color: var(--dark-color);
+                font-weight: 500;
+                padding: 10px 16px;
+                border-radius: var(--border-radius);
+                position: relative;
+                overflow: hidden;
+            }
+
+                nav ul li a[data-page="auth"] {
+                    display: none !important;
+                }
+
+                nav ul li a.active {
+                    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                    color: white;
+                    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+                }
+
+                    nav ul li a.active:after {
+                        content: '';
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 3px;
+                        background: white;
+                        border-radius: 3px;
+                    }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            border-radius: 50px;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            cursor: pointer;
+        }
+
+        body.dark-theme .user-info {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar,
+        .collaborator-avatar,
+        .collaborator-avatar-lg,
+        .chat-user-avatar,
+        .profile-avatar-large {
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+        }
+
+        .notifications-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+            .notifications-btn:hover {
+                background-color: rgba(46, 125, 50, 0.1);
+                color: var(--primary-color);
+            }
+
+        body.dark-theme .notifications-btn:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+            .btn-primary:hover {
+                box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+            }
+
+            .btn-primary:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+            .btn-outline:hover {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
+            }
+
+        .main-content {
+            min-height: calc(100vh - 180px);
+            padding: 30px 0;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+        }
+
+        .auth-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .auth-card:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .auth-header p {
+                color: var(--gray-color);
+            }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: rgba(46, 125, 50, 0.1);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+            .auth-tab:hover {
+                background: rgba(46, 125, 50, 0.2);
+            }
+
+            .auth-tab.active {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                color: white;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--dark-color);
+            }
+
+            .form-group small {
+                display: block;
+                margin-top: 5px;
+                color: var(--gray-color);
+                font-size: 0.8rem;
+            }
+
+            .form-group .error-message {
+                color: var(--danger-color);
+                font-size: 0.8rem;
+                margin-top: 5px;
+                display: none;
+            }
+
+            .form-group.has-error .error-message {
+                display: block;
+            }
+
+            .form-group.has-error input {
+                border-color: var(--danger-color);
+            }
+
+        .required-star {
+            color: var(--danger-color);
+            margin-left: 3px;
+        }
+
+        .form-control,
+        .profile-edit-input,
+        .chat-input,
+        .toolbar-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: inherit;
+        }
+
+        body.dark-theme .form-control,
+        body.dark-theme .profile-edit-input,
+        body.dark-theme .chat-input,
+        body.dark-theme .toolbar-select,
+        body.dark-theme .toolbar-btn,
+        body.dark-theme .zoom-controls,
+        body.dark-theme .font-size-btn,
+        body.dark-theme .density-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .form-control:focus,
+        .profile-edit-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+            background-color: white;
+        }
+
+        body.dark-theme .form-control:focus,
+        body.dark-theme .profile-edit-input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .checkbox-group input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+        .auth-footer,
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+            .auth-footer a,
+            .forgot-password a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+        .page-title {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius);
+            border: 2px dashed rgba(46, 125, 50, 0.3);
+            margin-top: 40px;
+        }
+
+        body.dark-theme .empty-state {
+            border: 2px dashed rgba(76, 175, 80, 0.3);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(46, 125, 50, 0.3);
+            margin-bottom: 20px;
+        }
+
+        body.dark-theme .empty-state i {
+            color: rgba(76, 175, 80, 0.3);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .empty-state p {
+            color: var(--gray-color);
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .document-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(46, 125, 50, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .document-card:hover {
+                box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15);
+            }
+
+            .document-card:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 5px;
+                height: 100%;
+                background: linear-gradient(180deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            }
+
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .document-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .document-action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--gray-color);
+            cursor: pointer;
+        }
+
+        .document-delete-btn,
+        .document-rename-btn {
+            position: absolute;
+            top: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            border: none;
+            color: white;
+        }
+
+        .document-delete-btn {
+            right: 10px;
+            background: var(--danger-color);
+        }
+
+        .document-rename-btn {
+            right: 50px;
+            background: var(--primary-color);
+        }
+
+        .document-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .document-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        body.dark-theme .document-meta,
+        body.dark-theme .profile-stats,
+        body.dark-theme .profile-section h3,
+        body.dark-theme .editor-stats,
+        body.dark-theme .settings-section h4,
+        body.dark-theme .setting-item {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .document-collaborators {
+            display: flex;
+        }
+
+        .collaborator-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            margin-left: -8px;
+            border: 2px solid white;
+        }
+
+        body.dark-theme .collaborator-avatar {
+            border-color: var(--light-color);
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .profile-sidebar {
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+            text-align: center;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+            cursor: pointer;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+
+        .profile-login {
+            color: var(--gray-color);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+            .profile-login:before {
+                content: '@';
+            }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(46, 125, 50, 0.1);
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        .profile-content {
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(46, 125, 50, 0.1);
+            margin-left: -20px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+            .profile-section:last-child {
+                margin-bottom: 0;
+            }
+
+            .profile-section h3 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+                color: var(--dark-color);
+                padding-bottom: 10px;
+                border-bottom: 2px solid rgba(46, 125, 50, 0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .profile-field {
+            margin-bottom: 15px;
+        }
+
+            .profile-field label {
+                display: block;
+                font-weight: 500;
+                margin-bottom: 5px;
+                color: var(--gray-color);
+                font-size: 0.9rem;
+            }
+
+            .profile-field .value {
+                font-size: 1rem;
+                color: var(--dark-color);
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+            }
+
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+        }
+
+        .editor-toolbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-right: 15px;
+            border-right: 1px solid rgba(46, 125, 50, 0.2);
+        }
+
+            .toolbar-group:last-child {
+                border-right: none;
+            }
+
+        .toolbar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            color: var(--dark-color);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            cursor: pointer;
+        }
+
+            .toolbar-btn:hover,
+            .toolbar-btn.active {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                color: white;
+            }
+
+            .toolbar-btn.active {
+                box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+            }
+
+        .color-picker-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .color-picker-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            cursor: pointer;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+            .color-picker-btn.bg {
+                background: #ffffff;
+                color: #000000;
+                border: 1px solid #cccccc;
+            }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+
+            .zoom-controls span {
+                font-size: 0.9rem;
+                color: var(--dark-color);
+                min-width: 45px;
+                text-align: center;
+            }
+
+        .editor-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .document-editor {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 0 20px 20px 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .document-title-bar {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
+        }
+
+        body.dark-theme .document-title-bar,
+        body.dark-theme .chat-header,
+        body.dark-theme .editor-stats {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(102, 187, 106, 0.02) 100%);
+        }
+
+        .editor-stats {
+            padding: 10px 20px;
+            border-top: 1px solid rgba(46, 125, 50, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .collaboration-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+            .toggle-slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+            .toggle-switch input:checked + .toggle-slider:before {
+                transform: translateX(26px);
+            }
+
+        .toggle-switch input:focus + .toggle-slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        .document-title-input {
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            width: 100%;
+            max-width: 500px;
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            background: transparent;
+            color: var(--dark-color);
+        }
+
+            .document-title-input:focus {
+                background-color: rgba(46, 125, 50, 0.1);
+            }
+
+        body.dark-theme .document-title-input {
+            color: #ffffff;
+        }
+
+            body.dark-theme .document-title-input:focus {
+                background-color: rgba(76, 175, 80, 0.1);
+            }
+
+        .editor-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            outline: none;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            background-color: white;
+            color: #000000;
+        }
+
+        body.dark-theme .editor-area {
+            background-color: #1a202c !important;
+            color: #ffffff !important;
+        }
+
+        .editor-area[data-placeholder]:empty:before {
+            content: attr(data-placeholder);
+            color: var(--gray-color);
+            font-style: italic;
+        }
+
+        body.dark-theme .editor-area:empty:before {
+            color: #a0aec0 !important;
+        }
+
+        .editor-area b,
+        .editor-area strong {
+            font-weight: bold !important;
+        }
+
+        .editor-area i,
+        .editor-area em {
+            font-style: italic !important;
+        }
+
+        .editor-area u {
+            text-decoration: underline !important;
+        }
+
+        .editor-area s,
+        .editor-area strike {
+            text-decoration: line-through !important;
+        }
+
+        .editor-area ul {
+            list-style-type: disc !important;
+            padding-left: 20px !important;
+            margin: 10px 0 !important;
+        }
+
+        .editor-area ol {
+            list-style-type: decimal !important;
+            padding-left: 20px !important;
+            margin: 10px 0 !important;
+        }
+
+        .editor-area li {
+            margin: 5px 0 !important;
+        }
+
+        .editor-area[contenteditable="true"]:focus {
+            outline: none;
+        }
+
+        .editor-area * {
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .editor-area div,
+        .editor-area p {
+            margin-bottom: 10px;
+            min-height: 1.5em;
+        }
+
+        .chat-modal,
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+
+            .chat-modal.active,
+            .modal-overlay.active {
+                display: flex;
+            }
+
+        .chat-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 500px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-user-avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        .chat-user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .chat-close-btn,
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-color);
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(46, 125, 50, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-send-btn {
+            padding: 0 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        .invite-modal {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .modal-header h3 {
+                font-size: 1.3rem;
+                color: var(--dark-color);
+            }
+
+        .collaborators-panel {
+            width: 280px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .collaborators-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .collaborator-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(46, 125, 50, 0.1);
+            cursor: pointer;
+        }
+
+        .collaborator-avatar-lg {
+            width: 42px;
+            height: 42px;
+        }
+
+        .collaborator-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: var(--dark-color);
+        }
+
+        .collaborator-info p {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+        }
+
+        .settings-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .settings-sidebar,
+        .settings-content {
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .settings-sidebar {
+            height: fit-content;
+        }
+
+            .settings-sidebar h3 {
+                margin-bottom: 20px;
+                color: var(--dark-color);
+            }
+
+        .settings-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .settings-nav button {
+                padding: 12px 15px;
+                border: none;
+                background: none;
+                text-align: left;
+                cursor: pointer;
+                border-radius: var(--border-radius);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--dark-color);
+            }
+
+                .settings-nav button.active {
+                    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                    color: white;
+                }
+
+        .settings-section {
+            display: none;
+        }
+
+            .settings-section.active {
+                display: block;
+            }
+
+            .settings-section h3 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+                color: var(--dark-color);
+            }
+
+            .settings-section h4 {
+                font-size: 1.1rem;
+                margin: 25px 0 15px 0;
+                color: var(--dark-color);
+                padding-bottom: 10px;
+                border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.05);
+        }
+
+        .setting-label {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .setting-label span {
+                font-weight: 500;
+                margin-bottom: 5px;
+                color: var(--dark-color);
+            }
+
+            .setting-label small {
+                color: var(--gray-color);
+                font-size: 0.85rem;
+            }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+            .switch input {
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        .theme-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .theme-color {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+            .theme-color.active {
+                border-color: var(--primary-color);
+            }
+
+        .theme-color-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .theme-color-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .font-size-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .font-size-btn,
+        .density-btn {
+            padding: 12px;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .font-size-btn {
+            padding: 8px 16px;
+        }
+
+            .font-size-btn:hover,
+            .density-btn:hover {
+                background: linear-gradient(135deg, rgba(46, 125, 50, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+            }
+
+            .font-size-btn.active,
+            .density-btn.active {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+        .ui-density {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .density-btn {
+            flex: 1;
+        }
+
+        body.dark-theme .toolbar-select option,
+        body.dark-theme .form-control option,
+        body.dark-theme select option {
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+
+            body.dark-theme .toolbar-select option:checked,
+            body.dark-theme .form-control option:checked {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+        body.dark-theme footer {
+            background-color: rgba(45, 55, 72, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 992px) {
+            .settings-container,
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .editor-toolbar {
+                justify-content: center;
+            }
+
+            .document-title-bar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .editor-content {
+                flex-direction: column;
+            }
+
+            .collaborators-panel {
+                width: 100%;
+                margin: 20px 0;
+            }
+
+            .profile-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo" id="logo-link">
+                <i class="fas fa-shield-alt"></i>
+                <span>Aegis</span>
+            </a>
+            <nav>
+                <ul id="nav-menu"></ul>
+            </nav>
+            <div class="user-menu" id="user-menu">
+                <button class="notifications-btn" id="notifications-btn">
+                    <i class="fas fa-bell"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="main-content container" id="main-content"></main>
+    <div class="modal-overlay" id="invite-modal">
+        <div class="invite-modal">
+            <div class="modal-header">
+                <h3>Пригласить коллег</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form class="invite-form" id="invite-form">
+                <div class="form-group">
+                    <label for="invite-username">Логин коллеги</label>
+                    <input type="text" id="invite-username" class="form-control" placeholder="@username или username" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Отправить приглашение
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="chat-modal" id="chat-modal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-user-info">
+                    <div class="chat-user-avatar" id="chat-user-avatar">ИП</div>
+                    <div>
+                        <div class="chat-user-name" id="chat-user-name">Иван Петров</div>
+                        <div class="chat-user-username" id="chat-user-username">@ivan_petrov</div>
+                    </div>
+                </div>
+                <button class="chat-close-btn" id="chat-close-btn">&times;</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div style="text-align: center; color: var(--gray-color); margin-top: 50px;">
+                    <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>Начните общение с коллегой</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="chat-input" placeholder="Введите сообщение..." rows="1"></textarea>
+                <button class="chat-send-btn" id="chat-send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ========== ДАННЫЕ ==========
+        const appData = {
+            currentUser: null,
+            currentPage: 'auth',
+            currentAuthTab: 'login',
+            users: [],
+            documents: [],
+            collaborators: [],
+            blockedUsers: [],
+            userActions: [],
+            settings: {
+                profile: {
+                    name: "",
+                    firstName: "",
+                    login: "",
+                    username: "",
+                    phone: "",
+                    regDate: new Date().toLocaleDateString('ru-RU'),
+                    avatar: ""
+                },
+                editor: {
+                    fontSize: "16px",
+                    fontFamily: "Inter, sans-serif",
+                    textColor: "#000000",
+                    bgColor: "#ffffff",
+                    collaborationEnabled: true
+                },
+                notifications: {
+                    pushNotifications: true,
+                    mentions: true,
+                },
+                appearance: {
+                    theme: "light",
+                    accentColor: "#2E7D32",
+                    density: "comfortable",
+                    fontSize: "medium",
+                    borderRadius: "normal",
+                },
+                editorSettings: {
+                    autoSave: true,
+                    spellCheck: true,
+                    wordCount: true,
+                    suggestions: true
+                }
+            },
+            fonts: [
+                "Arial, sans-serif", "Book Antiqua, serif", "Calibri, sans-serif",
+                "Cambria, serif", "Comic Sans MS, cursive", "Copperplate, serif",
+                "Garamond, serif", "Georgia, serif", "Impact, sans-serif",
+                "Lucida Console, monospace", "Times New Roman, serif",
+                "Trebuchet MS, sans-serif", "Ubuntu, sans-serif", "Verdana, sans-serif"
+            ],
+            fontSizes: ["8px", "9px", "10px", "11px", "12px", "13px", "14px", "15px",
+                "16px", "17px", "18px", "19px", "20px", "22px", "24px", "26px", "28px",
+                "30px", "32px", "34px", "36px", "40px", "44px", "48px", "52px", "56px", "60px", "64px", "72px"],
+            themes: [
+                { id: 'light', name: 'Светлая', color: '#2E7D32' },
+                { id: 'dark', name: 'Темная', color: '#1a202c' },
+            ],
+            currentChat: null,
+            profileEditing: false
+        };
+
+        // Функция добавления записи в журнал
+        function addActionLog(userId, action, details) {
+            const user = appData.users.find(u => u.id === userId);
+            const logEntry = {
+                time: new Date().toLocaleString(),
+                userId: userId,
+                userName: user ? user.name : 'Неизвестный',
+                action: action,
+                details: details || ''
+            };
+            appData.userActions.unshift(logEntry);
+            if (appData.userActions.length > 100) appData.userActions.pop();
+            utils.saveToLocalStorage();
+        }
+
+        // Функция проверки прав на редактирование - УБРАНЫ ВСЕ ОГРАНИЧЕНИЯ
+        function canEdit() {
+            return true; // Все могут редактировать
+        }
+
+        // Функция проверки прав админа - УБРАНЫ ВСЕ ОГРАНИЧЕНИЯ
+        function isAdmin() {
+            return appData.currentUser && appData.currentUser.role === 'admin';
+        }
+
+        const domCache = {
+            elements: {},
+            get: function (id) {
+                if (!this.elements[id]) {
+                    this.elements[id] = document.getElementById(id);
+                }
+                return this.elements[id];
+            }
+        };
+
+        const utils = {
+            saveToLocalStorage: function () {
+                localStorage.setItem('aegisUser', JSON.stringify(appData.currentUser));
+                localStorage.setItem('aegisUsers', JSON.stringify(appData.users));
+                localStorage.setItem('aegisSettings', JSON.stringify(appData.settings));
+                localStorage.setItem('aegisDocuments', JSON.stringify(appData.documents));
+                localStorage.setItem('aegisCollaborators', JSON.stringify(appData.collaborators));
+                localStorage.setItem('aegisBlocked', JSON.stringify(appData.blockedUsers));
+                localStorage.setItem('aegisActions', JSON.stringify(appData.userActions));
+            },
+            getUserInitials: function (name) {
+                if (!name) return '??';
+                return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            },
+            applyTheme: function (theme) {
+                document.body.classList.toggle('dark-theme', theme === 'dark');
+            },
+            applyFontSize: function (size) {
+                const sizes = { small: '12px', medium: '14px', large: '16px', xlarge: '18px' };
+                document.documentElement.style.fontSize = sizes[size] || '14px';
+            },
+            applyBorderRadius: function (radius) {
+                document.documentElement.style.setProperty('--border-radius', radius === 'large' ? '12px' : '8px');
+            },
+            validateNameRussianOnly: function (value) {
+                return /^[а-яА-ЯёЁ\s-]*$/.test(value);
+            },
+            validateUsernameLatin: function (value) {
+                return /^[a-zA-Z0-9_]*$/.test(value);
+            },
+            validatePhoneDigits: function (value) {
+                if (!value) return true;
+                return /^\+?[\d\s-]*$/.test(value);
+            },
+            validateName: function (value) {
+                return /^[а-яА-ЯёЁ\s-]*$/.test(value) && value.length <= 20;
+            },
+            validateUsername: function (value) {
+                return /^[a-zA-Z0-9_]*$/.test(value) && value.length <= 20;
+            },
+            validatePhone: function (value) {
+                if (!value) return true;
+                const phoneRegex = /^\+?\d{10,11}$/;
+                return phoneRegex.test(value);
+            },
+            validatePassword: function (value) {
+                return value.length <= 30;
+            }
+        };
+
+        const pageLoaders = {
+            auth: function (container) {
+                container.innerHTML = `
+                            <div class="auth-container">
+                                <div class="auth-card">
+                                    <div class="auth-header">
+                                        <h1>Добро пожаловать в Aegis</h1>
+                                        <p>Войдите в систему или создайте новый аккаунт</p>
+                                    </div>
+                                    <div class="auth-tabs">
+                                        <div class="auth-tab ${appData.currentAuthTab === 'login' ? 'active' : ''}" data-tab="login">Вход</div>
+                                        <div class="auth-tab ${appData.currentAuthTab === 'register' ? 'active' : ''}" data-tab="register">Регистрация</div>
+                                    </div>
+                                    <form id="login-form" style="${appData.currentAuthTab === 'login' ? 'display: block;' : 'display: none;'}">
+                                        <div class="form-group">
+                                            <label for="login-username">Логин</label>
+                                            <input type="text" id="login-username" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="login-password">Пароль</label>
+                                            <input type="password" id="login-password" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                                <i class="fas fa-sign-in-alt"></i> Войти
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <form id="register-form" style="${appData.currentAuthTab === 'register' ? 'display: block;' : 'display: none;'}">
+                                        <div class="form-group" id="group-firstName">
+                                            <label for="reg-firstName">Имя <span class="required-star"></span></label>
+                                            <input type="text" id="reg-firstName" class="form-control" maxlength="20" required>
+                                            <div class="error-message" id="error-firstName">Только русские буквы, до 20 символов</div>
+                                        </div>
+                                        <div class="form-group" id="group-username">
+                                            <label for="reg-username">Юзернейм</label>
+                                            <input type="text" id="reg-username" class="form-control" maxlength="20">
+                                            <div class="error-message" id="error-username">Латиница, цифры, _, до 20 символов</div>
+                                        </div>
+                                        <div class="form-group" id="group-phone">
+                                            <label for="reg-phone">Телефон <span class="required-star"></span></label>
+                                            <input type="tel" id="reg-phone" class="form-control" maxlength="12" required>
+                                            <div class="error-message" id="error-phone">Введите 10-11 цифр, возможно с +</div>
+                                        </div>
+                                        <div class="form-group" id="group-password">
+                                            <label for="reg-password">Пароль</label>
+                                            <input type="password" id="reg-password" class="form-control" maxlength="30">
+                                            <div class="error-message" id="error-password">Максимум 30 символов</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="checkbox-group">
+                                                <input type="checkbox" id="reg-agree" required>
+                                                <label for="reg-agree">Подтверждение обработки персональных данных</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" id="register-btn" style="width: 100%;" disabled>
+                                                <i class="fas fa-user-plus"></i> Зарегистрироваться
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>`;
+
+                const registerForm = document.getElementById('register-form');
+                if (registerForm) {
+                    const inputs = {
+                        firstName: document.getElementById('reg-firstName'),
+                        username: document.getElementById('reg-username'),
+                        phone: document.getElementById('reg-phone'),
+                        password: document.getElementById('reg-password'),
+                        agree: document.getElementById('reg-agree')
+                    };
+
+                    const validateField = (field, value) => {
+                        switch (field) {
+                            case 'firstName': return value && utils.validateNameRussianOnly(value);
+                            case 'username': return !value || utils.validateUsernameLatin(value);
+                            case 'phone': return value && utils.validatePhoneDigits(value);
+                            case 'password': return !value || utils.validatePassword(value);
+                            default: return true;
+                        }
+                    };
+
+                    const showError = (field, isValid) => {
+                        const group = document.getElementById(`group-${field}`);
+                        if (group) {
+                            if (!isValid && (field === 'firstName' ? inputs.firstName?.value : field === 'phone' ? inputs.phone?.value : true)) {
+                                group.classList.add('has-error');
+                            } else {
+                                group.classList.remove('has-error');
+                            }
+                        }
+                    };
+
+                    const checkFormValidity = () => {
+                        const isFirstNameValid = validateField('firstName', inputs.firstName?.value) && inputs.firstName?.value;
+                        const isPhoneValid = validateField('phone', inputs.phone?.value) && inputs.phone?.value;
+                        const isPasswordValid = validateField('password', inputs.password?.value);
+                        const isUsernameValid = validateField('username', inputs.username?.value);
+                        const isAgreeChecked = inputs.agree?.checked;
+                        const allValid = isFirstNameValid && isPhoneValid && isPasswordValid && isUsernameValid && isAgreeChecked;
+                        const registerBtn = document.getElementById('register-btn');
+                        if (registerBtn) registerBtn.disabled = !allValid;
+
+                        showError('firstName', isFirstNameValid);
+                        showError('phone', isPhoneValid);
+                        showError('password', isPasswordValid);
+                        showError('username', isUsernameValid);
+                    };
+
+                    Object.keys(inputs).forEach(key => {
+                        if (inputs[key] && key !== 'agree') {
+                            inputs[key].addEventListener('input', checkFormValidity);
+                        }
+                    });
+                    if (inputs.agree) inputs.agree.addEventListener('change', checkFormValidity);
+                    checkFormValidity();
+                }
+            },
+            home: function (container) {
+                if (!appData.currentUser) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><h3>Доступ ограничен</h3><p>Войдите в систему для просмотра документов</p></div>`;
+                    return;
+                }
+                container.innerHTML = `
+                            <h1 class="page-title">Мои документы</h1>
+                            <div class="document-actions" style="margin-bottom: 30px;">
+                                <button class="btn btn-primary" id="create-doc-btn"><i class="fas fa-plus"></i> Создать новый документ</button>
+                            </div>
+                            ${appData.documents.length === 0 ? `
+                                <div class="empty-state">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h3>У вас пока нет документов</h3>
+                                    <p>Создайте свой первый документ, чтобы начать работу.</p>
+                                </div>
+                            ` : `
+                                <div class="documents-grid" id="documents-grid">
+                                    ${appData.documents.map(doc => `
+                                        <div class="document-card" data-doc-id="${doc.id}">
+                                            <button class="document-delete-btn" data-doc-id="${doc.id}" title="Удалить документ"><i class="fas fa-trash"></i></button>
+                                            <button class="document-rename-btn" data-doc-id="${doc.id}" title="Переименовать"><i class="fas fa-edit"></i></button>
+                                            <div class="document-header"><div class="document-icon"><i class="${doc.icon}"></i></div></div>
+                                            <h3 class="document-title">${doc.title}</h3>
+                                            <p>Последнее изменение: ${doc.lastModified}</p>
+                                            <div class="document-meta">
+                                                <span>Владелец: ${doc.owner}</span>
+                                                <div class="document-collaborators">${doc.collaborators.map(collab => `<div class="collaborator-avatar" title="${collab.name}">${utils.getUserInitials(collab.name)}</div>`).join('')}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}`;
+            },
+            profile: function (container) {
+                const profile = appData.settings.profile;
+                const isEditing = appData.profileEditing;
+                container.innerHTML = `
+                            <h1 class="page-title">Мой профиль</h1>
+                            <div class="profile-container">
+                                <div class="profile-sidebar">
+                                    <div class="profile-avatar-large" id="profile-avatar-large">${utils.getUserInitials(profile.name)}</div>
+                                    <h2 class="profile-name">${profile.name}</h2>
+                                    <p class="profile-login">${profile.username || profile.login}</p>
+                                    <div class="profile-stats">
+                                        <div class="stat-item"><div class="stat-value">${appData.documents.length}</div><div class="stat-label">Документов</div></div>
+                                        <div class="stat-item"><div class="stat-value">${appData.collaborators.length}</div><div class="stat-label">Коллег</div></div>
+                                    </div>
+                                    <button class="btn btn-danger" style="width: 100%; margin-top: 20px;" id="logout-btn-profile">
+                                        <i class="fas fa-sign-out-alt"></i> Выйти из аккаунта
+                                    </button>
+                                </div>
+                                <div class="profile-content">
+                                    <div class="profile-section">
+                                        <h3><i class="fas fa-user"></i> Личные данные
+                                            <button class="btn btn-outline" id="edit-profile-btn" style="padding: 5px 15px; font-size: 0.9rem;">
+                                                ${isEditing ? '<i class="fas fa-save"></i> Сохранить' : '<i class="fas fa-edit"></i> Редактировать'}
+                                            </button>
+                                        </h3>
+                                        <div class="profile-grid">
+                                            <div class="profile-field"><label>Имя</label><div class="value" data-field="firstName">${isEditing ? `<input type="text" class="profile-edit-input" value="${profile.firstName || ''}" id="edit-firstName" maxlength="20">` : (profile.firstName || '')}</div></div>
+                                            <div class="profile-field"><label>Юзернейм</label><div class="value" data-field="username">${isEditing ? `<input type="text" class="profile-edit-input" value="${profile.username || ''}" id="edit-username" maxlength="20">` : (profile.username ? '@' + profile.username : '')}</div></div>
+                                            <div class="profile-field"><label>Телефон</label><div class="value" data-field="phone">${isEditing ? `<input type="tel" class="profile-edit-input" value="${profile.phone || ''}" id="edit-phone" maxlength="12" placeholder="+71234567890">` : (profile.phone || '')}</div></div>
+                                            <div class="profile-field"><label>Дата регистрации</label><div class="value">${profile.regDate || ''}</div></div>
+                                        </div>
+                                    </div>
+                                    <div class="profile-section">
+                                        <h3><i class="fas fa-users"></i> Мои коллеги</h3>
+                                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(46, 125, 50, 0.1);">
+                                            ${appData.collaborators.length === 0 ? `
+                                                <div class="empty-state" style="padding: 20px;">
+                                                    <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                                    <p>У вас пока нет коллег</p>
+                                                    <small>Добавьте коллег в редакторе документов</small>
+                                                </div>
+                                            ` : `
+                                                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                                    ${appData.collaborators.map(collab => `
+                                                        <div class="collaborator-item" data-collab-id="${collab.id}" style="flex: 0 0 calc(33.333% - 15px); min-width: 200px;">
+                                                            <div class="collaborator-avatar-lg">${utils.getUserInitials(collab.name)}</div>
+                                                            <div class="collaborator-info"><h4>${collab.name}</h4><p>@${collab.username}</p></div>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+            },
+            editor: function (container) {
+                const sortedFonts = [...appData.fonts].sort((a, b) => a.split(',')[0].toLowerCase().localeCompare(b.split(',')[0].toLowerCase()));
+                const fontOptions = sortedFonts.map(font => `<option value="${font}" ${font.split(',')[0] === 'Inter' ? 'selected' : ''}>${font.split(',')[0]}</option>`).join('');
+                const fontSizeOptions = appData.fontSizes.map(size => `<option value="${size}" ${size === '16px' ? 'selected' : ''}>${size}</option>`).join('');
+                const isDarkTheme = appData.settings.appearance.theme === 'dark';
+                const editorBgColor = isDarkTheme ? '#1a202c' : '#ffffff';
+                const editorTextColor = isDarkTheme ? '#ffffff' : '#000000';
+                container.innerHTML = `
+                        <div class="editor-container">
+                            <div class="editor-toolbar">
+                                <div class="toolbar-group"><select class="toolbar-select" id="font-family">${fontOptions}</select><select class="toolbar-select" id="font-size">${fontSizeOptions}</select></div>
+                                <div class="toolbar-group"><button class="toolbar-btn" id="bold-btn"><i class="fas fa-bold"></i></button><button class="toolbar-btn" id="italic-btn"><i class="fas fa-italic"></i></button><button class="toolbar-btn" id="underline-btn"><i class="fas fa-underline"></i></button></div>
+                                <div class="toolbar-group"><button class="color-picker-btn" id="text-color-btn" style="background-color: ${appData.settings.editor.textColor || editorTextColor};"><i class="fas fa-font"></i></button><input type="color" id="text-color-picker" style="display: none;" value="${appData.settings.editor.textColor || editorTextColor}">
+                                <button class="color-picker-btn bg" id="bg-color-btn" style="background-color: ${appData.settings.editor.bgColor || editorBgColor};"><i class="fas fa-fill-drip"></i></button><input type="color" id="bg-color-picker" style="display: none;" value="${appData.settings.editor.bgColor || editorBgColor}"></div>
+                                <div class="toolbar-group"><button class="toolbar-btn" id="align-left-btn"><i class="fas fa-align-left"></i></button><button class="toolbar-btn" id="align-center-btn"><i class="fas fa-align-center"></i></button><button class="toolbar-btn" id="align-right-btn"><i class="fas fa-align-right"></i></button></div>
+                                <div class="toolbar-group"><button class="toolbar-btn" id="list-ul-btn"><i class="fas fa-list-ul"></i></button><button class="toolbar-btn" id="list-ol-btn"><i class="fas fa-list-ol"></i></button><button class="toolbar-btn" id="indent-btn"><i class="fas fa-indent"></i></button><button class="toolbar-btn" id="outdent-btn"><i class="fas fa-outdent"></i></button></div>
+                                <div class="toolbar-group"><button class="toolbar-btn" id="undo-btn"><i class="fas fa-undo"></i></button><button class="toolbar-btn" id="redo-btn"><i class="fas fa-redo"></i></button></div>
+                                <div class="toolbar-group"><div class="zoom-controls"><button class="toolbar-btn" id="zoom-out-btn">-</button><span id="zoom-level">100%</span><button class="toolbar-btn" id="zoom-in-btn">+</button></div></div>
+                                <div class="toolbar-group"><button class="toolbar-btn" id="ai-scan-btn" style="background: var(--primary-color); color: white;"><i class="fas fa-robot"></i> ИИ</button></div>
+                                <div style="margin-left: auto; display: flex; gap: 10px;"><button class="btn btn-primary" id="save-doc-btn"><i class="fas fa-save"></i> Сохранить</button><button class="btn btn-outline" id="share-doc-btn"><i class="fas fa-user-plus"></i> Пригласить</button></div>
+                            </div>
+                            <div class="editor-content">
+                                <div class="document-editor">
+                                    <div class="document-title-bar"><div style="display: flex; align-items: center; width: 100%; justify-content: space-between;"><div style="flex:1"><input type="text" class="document-title-input" value="Новый документ" id="doc-title"></div><div><div class="collaboration-toggle"><span>Совместно:</span><label class="toggle-switch"><input type="checkbox" id="collaboration-toggle" ${appData.settings.editor.collaborationEnabled ? 'checked' : ''}><span class="toggle-slider"></span></label></div><button class="btn btn-outline" id="rename-current-btn" style="width:32px;height:32px;border-radius:50%;padding:0;"><i class="fas fa-edit"></i></button><button class="btn btn-outline" id="comments-btn" style="width:32px;height:32px;border-radius:50%;padding:0;"><i class="fas fa-comment"></i></button></div></div></div>
+                                    <div class="editor-area" contenteditable="true" id="editor-area" style="background-color:${editorBgColor};color:${editorTextColor};font-family:'Inter, sans-serif';font-size:16px;"></div>
+                                    <div class="editor-stats"><div><span id="word-count">Слов: 0</span><span style="margin-left:20px;" id="char-count">Символов: 0</span></div><div><span id="editor-info">${appData.settings.editor.collaborationEnabled ? 'Совместное редактирование включено' : 'Редактирование только для вас'}</span></div></div>
+                                </div>
+                                <div class="collaborators-panel"><h3 class="panel-title">Коллеги<i class="fas fa-plus" id="add-collaborator-btn"></i></h3><div class="collaborators-list" id="collaborators-list">${appData.collaborators.length === 0 ? '<div class="empty-state" style="padding:20px;text-align:center;"><i class="fas fa-users" style="font-size:2rem;margin-bottom:10px;"></i><p>Пока нет коллег</p></div>' : appData.collaborators.map(collab => `<div class="collaborator-item" data-collab-id="${collab.id}"><div class="collaborator-avatar-lg">${utils.getUserInitials(collab.name)}</div><div class="collaborator-info"><h4>${collab.name}</h4><p>@${collab.username}</p></div></div>`).join('')}</div></div>
+                            </div>
+                        </div>`;
+
+                // Декоративная кнопка ИИ - не обязана работать
+                setTimeout(() => {
+                    const aiBtn = document.getElementById('ai-scan-btn');
+                    if (aiBtn) {
+                        aiBtn.addEventListener('click', () => {
+                            alert('🤖 ИИ-анализ текста (демо-режим)');
+                        });
+                    }
+                }, 100);
+            },
+            settings: function (container) {
+                const currentRole = appData.currentUser ? (appData.currentUser.role === 'admin' ? 'Администратор' : (appData.currentUser.role === 'guest' ? 'Гость' : 'Пользователь')) : 'Не авторизован';
+
+                container.innerHTML = `
+                        <h1 class="page-title">Настройки</h1>
+                        <div class="settings-container">
+                            <div class="settings-sidebar">
+                                <h3><i class="fas fa-cog"></i> Настройки</h3>
+                                <div class="settings-nav">
+                                    <button class="active" data-section="appearance"><i class="fas fa-palette"></i> Внешний вид</button>
+                                    <button data-section="access"><i class="fas fa-key"></i> Уровень доступа</button>
+                                </div>
+                            </div>
+                            <div class="settings-content">
+                                <div class="settings-section active" id="appearance-settings">
+                                    <h3><i class="fas fa-palette"></i> Внешний вид</h3>
+                                    <h4>Тема оформления</h4>
+                                    <div class="theme-colors">
+                                        ${appData.themes.map(theme => `<div class="theme-color ${appData.settings.appearance.theme === theme.id ? 'active' : ''}" data-theme="${theme.id}"><div class="theme-color-preview" style="background-color: ${theme.color};"><i class="fas fa-check" style="display: ${appData.settings.appearance.theme === theme.id ? 'block' : 'none'};"></i></div><div class="theme-color-name">${theme.name}</div></div>`).join('')}
+                                    </div>
+                                    <h4>Размер шрифта интерфейса</h4>
+                                    <div class="font-size-options">
+                                        <button class="font-size-btn ${appData.settings.appearance.fontSize === 'small' ? 'active' : ''}" data-size="small">Маленький</button>
+                                        <button class="font-size-btn ${appData.settings.appearance.fontSize === 'medium' ? 'active' : ''}" data-size="medium">Средний</button>
+                                        <button class="font-size-btn ${appData.settings.appearance.fontSize === 'large' ? 'active' : ''}" data-size="large">Крупный</button>
+                                        <button class="font-size-btn ${appData.settings.appearance.fontSize === 'xlarge' ? 'active' : ''}" data-size="xlarge">Очень крупный</button>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-label"><span>Закругленные углы</span><small>Стиль элементов с закругленными углами</small></div>
+                                        <label class="switch"><input type="checkbox" id="rounded-corners" ${appData.settings.appearance.borderRadius === 'large' ? 'checked' : ''}><span class="slider"></span></label>
+                                    </div>
+                                </div>
+                                <div class="settings-section" id="access-settings">
+                                    <h3><i class="fas fa-key"></i> Уровень доступа</h3>
+                                    <div class="setting-item">
+                                        <div class="setting-label"><span>Ваша текущая роль</span></div>
+                                        <div><strong id="current-role-display">${currentRole}</strong></div>
+                                    </div>
+                                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px;">
+                                        <button id="role-user-btn" class="btn btn-primary" style="width: 100%; padding: 12px;">Пользователь</button>
+                                        <button id="role-guest-btn" class="btn btn-primary" style="width: 100%; padding: 12px;">Гость</button>
+                                        <button id="role-admin-btn" class="btn btn-primary" style="width: 100%; padding: 12px;">Администратор</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+
+                // Обработчики смены роли - мгновенно, без всплывающих окон и без обновления страницы
+                const roleUserBtn = document.getElementById('role-user-btn');
+                const roleGuestBtn = document.getElementById('role-guest-btn');
+                const roleAdminBtn = document.getElementById('role-admin-btn');
+                const currentRoleDisplay = document.getElementById('current-role-display');
+
+                const updateRoleDisplay = () => {
+                    if (currentRoleDisplay && appData.currentUser) {
+                        const roleText = appData.currentUser.role === 'admin' ? 'Администратор' : (appData.currentUser.role === 'guest' ? 'Гость' : 'Пользователь');
+                        currentRoleDisplay.textContent = roleText;
+                    }
+                    utils.saveToLocalStorage();
+                };
+
+                if (roleUserBtn) {
+                    roleUserBtn.addEventListener('click', () => {
+                        if (appData.currentUser) {
+                            appData.currentUser.role = 'user';
+                            const userInList = appData.users.find(u => u.id === appData.currentUser.id);
+                            if (userInList) userInList.role = 'user';
+                            updateRoleDisplay();
+                        }
+                    });
+                }
+                if (roleGuestBtn) {
+                    roleGuestBtn.addEventListener('click', () => {
+                        if (appData.currentUser) {
+                            appData.currentUser.role = 'guest';
+                            const userInList = appData.users.find(u => u.id === appData.currentUser.id);
+                            if (userInList) userInList.role = 'guest';
+                            updateRoleDisplay();
+                        }
+                    });
+                }
+                if (roleAdminBtn) {
+                    roleAdminBtn.addEventListener('click', () => {
+                        if (appData.currentUser) {
+                            appData.currentUser.role = 'admin';
+                            const userInList = appData.users.find(u => u.id === appData.currentUser.id);
+                            if (userInList) userInList.role = 'admin';
+                            updateRoleDisplay();
+                        }
+                    });
+                }
+            }
+        };
+
+        class App {
+            constructor() { this.init(); this.setupEventListeners(); }
+            init() { this.loadFromLocalStorage(); utils.applyTheme(appData.settings.appearance.theme); this.loadPage(); }
+            loadFromLocalStorage() {
+                const storedUser = localStorage.getItem('aegisUser');
+                const storedUsers = localStorage.getItem('aegisUsers');
+                const storedSettings = localStorage.getItem('aegisSettings');
+                const storedDocuments = localStorage.getItem('aegisDocuments');
+                const storedCollaborators = localStorage.getItem('aegisCollaborators');
+                const storedBlocked = localStorage.getItem('aegisBlocked');
+                const storedActions = localStorage.getItem('aegisActions');
+                if (storedUser) { appData.currentUser = JSON.parse(storedUser); appData.currentPage = 'home'; }
+                if (storedUsers) appData.users = JSON.parse(storedUsers);
+                if (storedSettings) appData.settings = JSON.parse(storedSettings);
+                if (storedDocuments) appData.documents = JSON.parse(storedDocuments);
+                if (storedCollaborators) appData.collaborators = JSON.parse(storedCollaborators);
+                if (storedBlocked) appData.blockedUsers = JSON.parse(storedBlocked);
+                if (storedActions) appData.userActions = JSON.parse(storedActions);
+                if (!appData.users.length) {
+                    appData.users.push({ id: 1, name: "Администратор", firstName: "Администратор", login: "admin", username: "admin", password: "admin123", role: "admin", phone: "+70000000000", regDate: new Date().toLocaleDateString('ru-RU') });
+                    appData.users.push({ id: 2, name: "Иван Петров", firstName: "Иван", login: "ivan", username: "ivan", password: "123", role: "user", phone: "+79991234567", regDate: new Date().toLocaleDateString('ru-RU') });
+                    appData.users.push({ id: 3, name: "Гость Демо", firstName: "Гость", login: "guest", username: "guest", password: "guest", role: "guest", phone: "", regDate: new Date().toLocaleDateString('ru-RU') });
+                    utils.saveToLocalStorage();
+                }
+            }
+            loadPage() {
+                const navMenu = domCache.get('nav-menu');
+                const userMenu = domCache.get('user-menu');
+                const mainContent = domCache.get('main-content');
+                if (appData.currentUser) {
+                    let adminLink = (appData.currentUser.role === 'admin') ? `<li><a href="#" class="${appData.currentPage === 'admin' ? 'active' : ''}" data-page="admin">Админ-панель</a></li>` : '';
+                    navMenu.innerHTML = `<li><a href="#" class="${appData.currentPage === 'home' ? 'active' : ''}" data-page="home">Мои документы</a></li><li><a href="#" class="${appData.currentPage === 'editor' ? 'active' : ''}" data-page="editor">Редактирование</a></li><li><a href="#" class="${appData.currentPage === 'settings' ? 'active' : ''}" data-page="settings">Настройки</a></li>${adminLink}`;
+                    userMenu.innerHTML = `<button class="notifications-btn" id="notifications-btn"><i class="fas fa-bell"></i></button><div class="user-info" id="user-dropdown-btn"><div class="user-avatar" id="user-avatar-btn">${utils.getUserInitials(appData.settings.profile.name)}</div><span>${appData.settings.profile.name}</span></div>`;
+                } else { navMenu.innerHTML = `<li><a href="#" class="${appData.currentPage === 'auth' ? 'active' : ''}" data-page="auth">Вход / Регистрация</a></li>`; }
+                if (pageLoaders[appData.currentPage]) pageLoaders[appData.currentPage](mainContent);
+                this.setupPageSpecificListeners();
+            }
+            setupEventListeners() {
+                document.addEventListener('click', (e) => this.handleClick(e));
+                document.addEventListener('submit', (e) => this.handleSubmit(e));
+                document.addEventListener('change', (e) => this.handleChange(e));
+                const chatInput = domCache.get('chat-input');
+                if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendChatMessage(); } });
+            }
+            handleClick(e) {
+                if (e.target.closest('#logo-link')) { e.preventDefault(); appData.currentPage = 'home'; this.loadPage(); }
+                const pageLink = e.target.closest('[data-page]');
+                if (pageLink) { e.preventDefault(); appData.currentPage = pageLink.getAttribute('data-page'); this.loadPage(); }
+                if (e.target.closest('#user-avatar-btn') || e.target.closest('#profile-avatar-large')) { e.preventDefault(); appData.currentPage = 'profile'; this.loadPage(); }
+                const authTab = e.target.closest('.auth-tab');
+                if (authTab) { e.preventDefault(); appData.currentAuthTab = authTab.getAttribute('data-tab'); document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active')); authTab.classList.add('active'); const loginForm = domCache.get('login-form'); const registerForm = domCache.get('register-form'); if (loginForm && registerForm) { loginForm.style.display = appData.currentAuthTab === 'login' ? 'block' : 'none'; registerForm.style.display = appData.currentAuthTab === 'register' ? 'block' : 'none'; } }
+                if (e.target.closest('#create-doc-btn')) { e.preventDefault(); appData.currentPage = 'editor'; this.loadPage(); }
+                const deleteBtn = e.target.closest('.document-delete-btn');
+                if (deleteBtn) { e.preventDefault(); const docId = parseInt(deleteBtn.getAttribute('data-doc-id')); if (confirm('Вы действительно хотите удалить этот документ?')) { appData.documents = appData.documents.filter(doc => doc.id !== docId); utils.saveToLocalStorage(); this.loadPage(); } }
+                const renameBtn = e.target.closest('.document-rename-btn');
+                if (renameBtn) { e.preventDefault(); const docId = parseInt(renameBtn.getAttribute('data-doc-id')); const doc = appData.documents.find(d => d.id === docId); if (doc) { const newName = prompt('Введите новое название документа:', doc.title); if (newName && newName.trim() !== '') { doc.title = newName.trim(); utils.saveToLocalStorage(); this.loadPage(); } } }
+                if (e.target.closest('#save-doc-btn')) { e.preventDefault(); let title = domCache.get('doc-title')?.value || 'Без названия'; if (title === 'Новый документ' || title.trim() === '') title = prompt('Введите название документа:', title) || 'Без названия'; const newDoc = { id: Date.now(), title: title, lastModified: new Date().toLocaleDateString('ru-RU'), owner: appData.settings.profile.name, collaborators: [...appData.collaborators], icon: "fas fa-file-alt" }; appData.documents.push(newDoc); utils.saveToLocalStorage(); addActionLog(appData.currentUser?.id, 'СОЗДАНИЕ ДОКУМЕНТА', title); appData.currentPage = 'home'; this.loadPage(); }
+                if (e.target.closest('#edit-profile-btn')) { e.preventDefault(); if (!appData.profileEditing) { appData.profileEditing = true; this.loadPage(); } else { this.saveProfileChanges(); } }
+                const collabItem = e.target.closest('.collaborator-item');
+                if (collabItem) { e.preventDefault(); const collabId = parseInt(collabItem.getAttribute('data-collab-id')); const collab = appData.collaborators.find(c => c.id === collabId); if (collab) this.openChat(collab); }
+                if (e.target.closest('#logout-btn-profile')) { e.preventDefault(); if (confirm('Вы действительно хотите выйти из аккаунта?')) { appData.currentUser = null; appData.profileEditing = false; localStorage.removeItem('aegisUser'); appData.currentPage = 'auth'; appData.currentAuthTab = 'login'; this.loadPage(); } }
+                if (e.target.closest('#share-doc-btn') || e.target.closest('#add-collaborator-btn')) { e.preventDefault(); domCache.get('invite-modal').classList.add('active'); }
+                if (e.target.closest('#modal-close') || (e.target.closest('#invite-modal') && !e.target.closest('.invite-modal'))) { e.preventDefault(); domCache.get('invite-modal').classList.remove('active'); }
+                if (e.target.closest('#chat-close-btn')) this.closeChat();
+                if (e.target.closest('#chat-send-btn')) this.sendChatMessage();
+                const settingsBtn = e.target.closest('[data-section]');
+                if (settingsBtn) { e.preventDefault(); document.querySelectorAll('.settings-nav button').forEach(btn => btn.classList.remove('active')); settingsBtn.classList.add('active'); const sectionId = settingsBtn.getAttribute('data-section'); document.querySelectorAll('.settings-section').forEach(section => section.classList.remove('active')); domCache.get(`${sectionId}-settings`).classList.add('active'); }
+                const themeBtn = e.target.closest('[data-theme]');
+                if (themeBtn) { e.preventDefault(); const themeId = themeBtn.getAttribute('data-theme'); document.querySelectorAll('.theme-color').forEach(theme => theme.classList.remove('active')); themeBtn.classList.add('active'); appData.settings.appearance.theme = themeId; utils.applyTheme(themeId); utils.saveToLocalStorage(); if (appData.currentPage === 'editor') this.loadPage(); }
+                const fontSizeBtn = e.target.closest('[data-size]');
+                if (fontSizeBtn) { e.preventDefault(); const size = fontSizeBtn.getAttribute('data-size'); document.querySelectorAll('.font-size-btn').forEach(btn => btn.classList.remove('active')); fontSizeBtn.classList.add('active'); appData.settings.appearance.fontSize = size; utils.saveToLocalStorage(); utils.applyFontSize(size); }
+            }
+            handleSubmit(e) {
+                if (e.target.matches('#login-form')) { e.preventDefault(); const username = domCache.get('login-username')?.value; const password = domCache.get('login-password')?.value; if (!username || !password) return; const user = appData.users.find(u => (u.username === username || u.login === username) && u.password === password); if (user) { if (appData.blockedUsers.includes(user.id)) { alert('Ваш аккаунт заблокирован администратором'); return; } appData.currentUser = { id: user.id, name: user.name, login: user.login, username: user.username, role: user.role }; appData.settings.profile = { ...user }; utils.saveToLocalStorage(); addActionLog(user.id, 'ВХОД', 'Успешная авторизация'); appData.currentPage = 'home'; this.loadPage(); } else { alert('Неверный логин или пароль'); } }
+                if (e.target.matches('#register-form')) { e.preventDefault(); const firstName = domCache.get('reg-firstName')?.value; const username = domCache.get('reg-username')?.value; const phone = domCache.get('reg-phone')?.value; const password = domCache.get('reg-password')?.value; const agree = domCache.get('reg-agree')?.checked; if (!firstName || !phone) { alert('Заполните все обязательные поля'); return; } if (!agree) { alert('Подтвердите обработку персональных данных'); return; } if (!utils.validateNameRussianOnly(firstName)) { alert('Допустимо использование только букв русского алфавита'); return; } if (username && !utils.validateUsernameLatin(username)) { alert('Допустимо использование только латинских букв, цифр и символа "_"'); return; } if (!utils.validatePhoneDigits(phone)) { alert('Допустимо использование только цифр и знака "+"'); return; } if (appData.users.find(u => u.login === username)) { alert('Такой логин уже существует'); return; } const newUser = { id: Date.now(), name: firstName, firstName: firstName, login: username ? username.toLowerCase() : '', username: username ? username.toLowerCase() : '', phone: phone, password: password || '', role: 'user', regDate: new Date().toLocaleDateString('ru-RU'), avatar: utils.getUserInitials(firstName) }; appData.users.push(newUser); appData.currentUser = { id: newUser.id, name: newUser.name, login: newUser.login, username: newUser.username, role: 'user' }; appData.settings.profile = { ...newUser }; utils.saveToLocalStorage(); addActionLog(newUser.id, 'РЕГИСТРАЦИЯ', 'Новый пользователь'); appData.currentPage = 'home'; this.loadPage(); }
+                if (e.target.matches('#invite-form')) { e.preventDefault(); const usernameInput = domCache.get('invite-username'); if (!usernameInput.value) return; const username = usernameInput.value.replace('@', ''); if (appData.collaborators.some(c => c.username === username)) { alert('Этот коллега уже добавлен'); return; } const name = username.charAt(0).toUpperCase() + username.slice(1); const newCollaborator = { id: Date.now(), name: name, username: username, permissions: { view: true, edit: true, comment: true } }; appData.collaborators.push(newCollaborator); utils.saveToLocalStorage(); domCache.get('invite-modal').classList.remove('active'); e.target.reset(); this.loadPage(); }
+            }
+            handleChange(e) {
+                if (e.target.matches('.switch input')) { const id = e.target.id; const value = e.target.checked; if (id === 'push-notifications') appData.settings.notifications.pushNotifications = value; if (id === 'mentions') appData.settings.notifications.mentions = value; if (id === 'rounded-corners') { appData.settings.appearance.borderRadius = value ? 'large' : 'normal'; utils.applyBorderRadius(value ? 'large' : 'normal'); } if (id === 'collaboration-toggle') { appData.settings.editor.collaborationEnabled = value; const editorInfo = domCache.get('editor-info'); if (editorInfo) editorInfo.textContent = value ? 'Совместное редактирование включено' : 'Редактирование только для вас'; } utils.saveToLocalStorage(); }
+            }
+            saveProfileChanges() { const profile = appData.settings.profile; const fields = ['firstName', 'username', 'phone']; fields.forEach(field => { const input = domCache.get(`edit-${field}`); if (input) profile[field] = input.value || profile[field]; }); profile.name = profile.firstName || ''; if (appData.currentUser) { appData.currentUser.name = profile.name; appData.currentUser.username = profile.username; const userInList = appData.users.find(u => u.id === appData.currentUser.id); if (userInList) { userInList.name = profile.name; userInList.username = profile.username; userInList.phone = profile.phone; } } appData.profileEditing = false; utils.saveToLocalStorage(); this.loadPage(); }
+            setupPageSpecificListeners() { if (appData.currentPage === 'editor') this.setupEditorListeners(); }
+            setupEditorListeners() {
+                const editor = domCache.get('editor-area');
+                if (!editor) return;
+                const isDarkTheme = appData.settings.appearance.theme === 'dark';
+                editor.style.fontSize = appData.settings.editor.fontSize || '16px';
+                editor.style.fontFamily = appData.settings.editor.fontFamily || 'Inter, sans-serif';
+                editor.style.color = appData.settings.editor.textColor || (isDarkTheme ? '#ffffff' : '#000000');
+                editor.style.backgroundColor = appData.settings.editor.bgColor || (isDarkTheme ? '#1a202c' : '#ffffff');
+                editor.addEventListener('input', () => this.updateWordCount());
+                document.addEventListener('click', (e) => {
+                    const toolbarBtn = e.target.closest('.toolbar-btn');
+                    if (toolbarBtn && editor && toolbarBtn.id !== 'ai-scan-btn') {
+                        e.preventDefault();
+                        const command = toolbarBtn.id.replace('-btn', '');
+                        editor.focus();
+                        const commands = {
+                            'bold': () => document.execCommand('bold'), 'italic': () => document.execCommand('italic'), 'underline': () => document.execCommand('underline'),
+                            'align-left': () => { document.execCommand('justifyLeft'); this.setActiveAlignButton(toolbarBtn); },
+                            'align-center': () => { document.execCommand('justifyCenter'); this.setActiveAlignButton(toolbarBtn); },
+                            'align-right': () => { document.execCommand('justifyRight'); this.setActiveAlignButton(toolbarBtn); },
+                            'list-ul': () => document.execCommand('insertUnorderedList'), 'list-ol': () => document.execCommand('insertOrderedList'),
+                            'indent': () => document.execCommand('indent'), 'outdent': () => document.execCommand('outdent'),
+                            'undo': () => document.execCommand('undo'), 'redo': () => document.execCommand('redo')
+                        };
+                        if (commands[command]) { commands[command](); this.updateFormattingButtonsState(); }
+                    }
+                });
+                const fontFamilySelect = domCache.get('font-family');
+                if (fontFamilySelect) fontFamilySelect.addEventListener('change', () => { editor.focus(); const fontFamily = fontFamilySelect.value; document.execCommand('fontName', false, fontFamily.split(',')[0]); editor.style.fontFamily = fontFamily; appData.settings.editor.fontFamily = fontFamily; utils.saveToLocalStorage(); });
+                const fontSizeSelect = domCache.get('font-size');
+                if (fontSizeSelect) fontSizeSelect.addEventListener('change', () => { editor.focus(); const fontSize = fontSizeSelect.value; document.execCommand('fontSize', false, fontSize.replace('px', '')); editor.style.fontSize = fontSize; appData.settings.editor.fontSize = fontSize; utils.saveToLocalStorage(); });
+                const textColorBtn = domCache.get('text-color-btn'); const textColorPicker = domCache.get('text-color-picker');
+                if (textColorBtn && textColorPicker) { textColorBtn.addEventListener('click', () => textColorPicker.click()); textColorPicker.addEventListener('change', () => { editor.focus(); const color = textColorPicker.value; document.execCommand('foreColor', false, color); textColorBtn.style.backgroundColor = color; editor.style.color = color; appData.settings.editor.textColor = color; utils.saveToLocalStorage(); }); }
+                const bgColorBtn = domCache.get('bg-color-btn'); const bgColorPicker = domCache.get('bg-color-picker');
+                if (bgColorBtn && bgColorPicker) { bgColorBtn.addEventListener('click', () => bgColorPicker.click()); bgColorPicker.addEventListener('change', () => { editor.focus(); const color = bgColorPicker.value; document.execCommand('backColor', false, color); bgColorBtn.style.backgroundColor = color; editor.style.backgroundColor = color; appData.settings.editor.bgColor = color; utils.saveToLocalStorage(); }); }
+                const renameCurrentBtn = domCache.get('rename-current-btn');
+                if (renameCurrentBtn) renameCurrentBtn.addEventListener('click', () => { const titleInput = domCache.get('doc-title'); const newTitle = prompt('Введите новое название документа:', titleInput.value); if (newTitle && newTitle.trim() !== '') titleInput.value = newTitle.trim(); });
+                let zoomLevel = 100; const zoomInBtn = domCache.get('zoom-in-btn'); const zoomOutBtn = domCache.get('zoom-out-btn'); const zoomLevelElement = domCache.get('zoom-level');
+                if (zoomInBtn) zoomInBtn.addEventListener('click', () => { if (zoomLevel < 200) { zoomLevel += 10; this.updateZoom(zoomLevel, editor, zoomLevelElement); } });
+                if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => { if (zoomLevel > 50) { zoomLevel -= 10; this.updateZoom(zoomLevel, editor, zoomLevelElement); } });
+                setTimeout(() => { this.updateWordCount(); this.updateFormattingButtonsState(); }, 100);
+                editor.addEventListener('click', () => this.updateFormattingButtonsState()); editor.addEventListener('keyup', () => this.updateFormattingButtonsState()); editor.addEventListener('mouseup', () => this.updateFormattingButtonsState());
+            }
+            updateZoom(level, editor, levelElement) { if (editor && levelElement) { editor.style.width = `calc(100% / ${level / 100})`; levelElement.textContent = `${level}%`; } }
+            updateWordCount() { const editor = domCache.get('editor-area'); if (!editor) return; const text = editor.innerText || editor.textContent; const words = text.trim().split(/\s+/).filter(word => word.length > 0); const chars = text.length; const wordCountElement = domCache.get('word-count'); const charCountElement = domCache.get('char-count'); if (wordCountElement) wordCountElement.textContent = `Слов: ${words.length}`; if (charCountElement) charCountElement.textContent = `Символов: ${chars}`; }
+            updateFormattingButtonsState() { try { const commands = [{ id: 'bold', cmd: 'bold' }, { id: 'italic', cmd: 'italic' }, { id: 'underline', cmd: 'underline' }]; commands.forEach(item => { const btn = domCache.get(`${item.id}-btn`); if (btn) btn.classList.toggle('active', document.queryCommandState(item.cmd)); }); const alignBtns = { 'justifyLeft': 'align-left-btn', 'justifyCenter': 'align-center-btn', 'justifyRight': 'align-right-btn' }; for (const [cmd, btnId] of Object.entries(alignBtns)) { const btn = domCache.get(btnId); if (btn) btn.classList.toggle('active', document.queryCommandState(cmd)); } } catch (error) { console.error('Error updating formatting buttons:', error); } }
+            setActiveAlignButton(activeBtn) { ['align-left-btn', 'align-center-btn', 'align-right-btn'].forEach(id => { const btn = domCache.get(id); if (btn) btn.classList.remove('active'); }); activeBtn.classList.add('active'); }
+            openChat(collab) { appData.currentChat = collab; domCache.get('chat-user-avatar').textContent = utils.getUserInitials(collab.name); domCache.get('chat-user-name').textContent = collab.name; domCache.get('chat-user-username').textContent = `@${collab.username}`; const messagesContainer = domCache.get('chat-messages'); if (messagesContainer) messagesContainer.innerHTML = `<div style="text-align: center; color: var(--gray-color); margin-top: 50px;"><i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 15px;"></i><p>Начните общение с ${collab.name}</p></div>`; const chatInput = domCache.get('chat-input'); if (chatInput) chatInput.value = ''; domCache.get('chat-modal').classList.add('active'); }
+            closeChat() { domCache.get('chat-modal').classList.remove('active'); appData.currentChat = null; }
+            sendChatMessage() { const chatInput = domCache.get('chat-input'); const message = chatInput?.value.trim(); if (!message || !appData.currentChat) return; const messagesContainer = domCache.get('chat-messages'); if (!messagesContainer) return; const emptyState = messagesContainer.querySelector('div[style*="text-align: center"]'); if (emptyState) emptyState.remove(); const messageElement = document.createElement('div'); messageElement.style.cssText = `padding: 10px 15px; background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%); border-radius: var(--border-radius); max-width: 80%; margin-left: auto; margin-bottom: 10px;`; messageElement.textContent = message; messagesContainer.appendChild(messageElement); messagesContainer.scrollTop = messagesContainer.scrollHeight; chatInput.value = ''; chatInput.focus(); }
+        }
+        document.addEventListener('DOMContentLoaded', () => { new App(); });
+    </script>
+</body>
+</html>
